@@ -1,0 +1,64 @@
+The first thing I would consider is what tech stack im going to want to complete the task.
+- The tasks consists of: ingesting data from an API -> Processing -> Storage
+Requirements:
+- Reusability, perofmrance optimisation (high volume), incremental updates to the DB
+- From the extra questions -> Volume subject to increase -> Scalability is a big concern -> Concurrency
+- Testing -> unittests, integration tests, testing on AWS -> Cloudwatch monitoring logs
+- Version control -> Git is being used -> can be rolled back/adjusted as necessary
+- Continous Integration could be done through a CICD pipeline in a production setting for automated testing
+
+PostgresSQL
+It is a production grade relational database. 
+Supports partitioning, which is useful for time based data (easy to partition)
+
+Ingestion Stage
+There is multiple ingestion paths in the API.
+There is endpoints to collect all readings/measures from ALL stations
+OR could get readings per measure per station, using multiple endpoints and collate data
+The requirements say 'one wweks worht of data for each monitoring station' -> ALL measures per station
+The API Documentation states the preferable way is to call /data/readings endpoint and use 'since' filter.
+This reduces the amount of API calls as opposed to having to crawl through each station
+
+Data modelling - star schema
+
+
+data includes stations (slow changing), measures (slow changing) and readings (fast changing data)
+that makes readings the fact and stations and measures dimmensions
+
+to get a weeks worth of data, i see in the documentation, the since argument can only be used for a specific station
+so instead, i will get the current date, subtract a week, to get a week to dates worth of data
+This way it will be programtic and not hard coded dates, and i will use the startdate and endate filters
+
+
+Transform stage
+Goal is to get the data in a format ready to store. This means getting the format of my readings (fact)
+The API shows it returns date, datetime, measure and value, but there actually is no date field (probably becaues its redundant)
+Create a list of dictionaries (each an entry) containing the info about each reading
+IMPORTANT: using .get instead of indexing the dictionary as if a value is not present, it will crash (NaN Values as stated in the docs)
+
+Put into database:
+
+
+Ran into an issue:
+only 500 rows getting inserted, api says 500 default limit
+could set limit higher -> how many readings could there be though?
+did some checks:
+number of active stations:
+2510
+number of suspended:
+30
+Number of total = 2540
+number of measures: 1 - atleast from my testing of 5 stations
+therfore as readings taken every 15 mins per measure per station:
+2540 x 1 (4 x 24 x 7) = weekly ingest = 1,707,840. This is how many rows we can roughly (some will have more) guess will be ingested if run once every 7 days
+THIS determins how i can process the data.
+could set limit to something like 2,000,000 +
+
+instead of using the fist endpoint that returns everythign at once, its going to a massive respoinse that is going to cause timeouts and retry issues and generally be slow with that much data in memory
+Loop through stations - 672 items (roughly) per api call
+increase number of API calls - much easier to handle each one however
+
+Working (atleast from intial testing)
+making initial commit here
+
+
