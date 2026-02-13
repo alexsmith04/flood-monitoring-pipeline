@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS readings (
 
 def main():
     try:
-        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST)
+        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
         cur = conn.cursor()
         cur.execute(CREATE_TABLE_QUERY)
         conn.commit()

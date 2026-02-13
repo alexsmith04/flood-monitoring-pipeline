@@ -51,7 +51,7 @@ def fetch_readings_for_station(station_id, start_date, end_date):
         except requests.RequestException as e:
             print(f"attempt {attempt} failed for station {station_id}: {e}")
 
-            if attempt < MAX_RETIRES:
+            if attempt < MAX_RETIRES - 1:
                 print(f"retrying in {RETRY_DELAY} seconds")
                 time.sleep(RETRY_DELAY)
             else:
