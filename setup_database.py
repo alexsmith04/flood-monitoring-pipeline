@@ -1,10 +1,11 @@
+import os
 import psycopg2
 
-DB_NAME = "flood"
-DB_USER = "postgres"
-DB_PASSWORD = "password"
-DB_HOST = "localhost"
-DB_PORT = "5433"
+DB_NAME = os.environ["DB_NAME"]
+DB_USER = os.environ["DB_USER"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]
+DB_HOST = os.environ["DB_HOST"]
+DB_PORT = os.environ.get("DB_PORT", 5432)
 
 CREATE_TABLE_QUERY = """
 CREATE TABLE IF NOT EXISTS readings (
