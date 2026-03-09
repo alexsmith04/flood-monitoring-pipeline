@@ -3,13 +3,15 @@ from etl_pipeline.extract import fetch_readings_for_station
 from etl_pipeline.transform import transform_readings
 from etl_pipeline.load.connection import get_connection
 from etl_pipeline.load.load import insert_reading
+from config.config import RABBITMQ_URL, REDIS_URL
 from logger import get_logger
 
 logger = get_logger(__name__)
 
 app = Celery(
     'flood_etl',
-    broker='amqp://guest:guest@localhost:5672//'
+    broker=RABBITMQ_URL,
+    backend=REDIS_URL
 )
 
 @app.task(bind=True, max_retries=3, default_retry_delay=2)

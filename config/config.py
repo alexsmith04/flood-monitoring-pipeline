@@ -8,6 +8,9 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 
+RABBITMQ_URL = os.getenv("RABBITMQ_URL")
+REDIS_URL = os.getenv("REDIS_URL")
+
 ROOT = 'https://environment.data.gov.uk/flood-monitoring'
 ALL_STATIONS = '/id/stations'
 MAX_RETIRES = 3
