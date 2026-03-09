@@ -1,10 +1,5 @@
 import psycopg2
-
-DB_NAME = "flood"
-DB_USER = "postgres"
-DB_PASSWORD = "password"
-DB_HOST = "localhost"
-DB_PORT = "5433"
+from config.config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 
 CREATE_TABLE_QUERY = """
 CREATE TABLE IF NOT EXISTS readings (
