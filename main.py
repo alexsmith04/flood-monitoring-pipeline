@@ -3,12 +3,18 @@ from etl_pipeline.extract import fetch_stations
 from etl_pipeline.transform import get_station_ids
 from tasks import process_station
 from logger import get_logger
+from cache import get_cached_stations, cache_stations
 
 logger = get_logger(__name__)
 
 if __name__ == '__main__':
     start_date, end_date = get_dates()
-    stations = fetch_stations()
+
+    stations = get_cached_stations()
+    if stations is None:
+        stations = fetch_stations()
+        cache_stations(stations)
+        
     station_ids = get_station_ids(stations)
 
     for station_id in station_ids:
